@@ -115,6 +115,37 @@ History.prototype.loadLinkVars = function() {
         this.history[0].variables[c] = clone(this.history[0].linkVars[c]);
     }
 };
+function showVariables(){
+    // mybe show changes, hover links
+    let vars = state.history[0].variables;
+    let outer = document.getElementById('vars');
+    if(!outer) {
+        outer = document.createElement('div');
+        outer.id = 'vars';
+        outer.style.float='right';
+        outer.style.width = '200px';
+        outer.style.backgroundColor = "rgba(0,0,0,.9)";
+        outer.style["text-align"] = 'left';
+        document.body.appendChild(outer);
+    }
+    outer.innerHTML = "";
+    outer.appendChild(document.createTextNode(state.history[0].passage.tags.join(' ')));
+    outer.appendChild(document.createElement('br'));
+    for(const v in vars){
+        if(typeof vars[v] !== 'string' || !vars[v].endsWith('.mp3')) {
+            if(vars[v]!=='no') {
+                outer.appendChild(document.createTextNode(v + '=' + vars[v] + ' '));
+                outer.appendChild(document.createElement('br'));
+            }
+        }
+    }
+    let gray = document.createElement('div'), text = '';
+    gray.style.color = 'gray';
+    gray.style.fontStyle = 'italic';
+    for(const v in vars) if(vars[v]==='no') text += v + ' ';
+    gray.appendChild(document.createTextNode(text));
+    outer.appendChild(gray);
+}
 Passage.prototype.render = function () {
     var b = insertElement(null, 'div', 'passage' + this.title, 'passage');
     b.style.visibility = 'hidden';
@@ -125,11 +156,19 @@ Passage.prototype.render = function () {
     for (var i in prerender) {
         (typeof prerender[i] == "function") && prerender[i].call(this,a);
     }
+    // Show title
+    let h = document.createElement('h2');
+    h.appendChild(document.createTextNode(this.title));
+    a.appendChild(h);
+    // if (typeof prerender === 'object') {
+    //     prerender['title'] = (div) => {}
+    // }
     new Wikifier(a, this.processText());
     insertElement(b, 'div', '', 'footer');
     for (i in postrender) {
         (typeof postrender[i] == "function") && postrender[i].call(this,a);
     }
+    showVariables();
     return b;
 };
 Passage.prototype.excerpt = function () {
