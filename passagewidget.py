@@ -225,15 +225,11 @@ class PassageWidget(object):
             else:
                 self.passageFrame = PassageFrame(None, self, self.app)
                 if fullscreen: self.passageFrame.openFullscreen()
+            self.passageFrame.Bind(wx.EVT_WINDOW_DESTROY, lambda e: delattr(self, 'passageFrame'))
         else:
-            try:
-                self.passageFrame.Iconize(False)
-                self.passageFrame.Raise()
-                if fullscreen and not image: self.passageFrame.openFullscreen()
-            except wx._core.PyDeadObjectError:
-                # user closed the frame, so we need to recreate it
-                delattr(self, 'passageFrame')
-                self.openEditor(event, fullscreen)
+            self.passageFrame.Iconize(False)
+            self.passageFrame.Raise()
+            if fullscreen and not image: self.passageFrame.openFullscreen()
 
     def closeEditor(self, event = None):
         """Closes the PassageFrame associated with this, if it exists."""
@@ -512,7 +508,7 @@ class PassageWidget(object):
                     c[0] *= a
                     c[1] *= a
                     c[2] *= a
-            return wx.Colour(*c)
+            return wx.Colour(*[int(x) for x in c])
 
         # set up our buffer
         bitmap = wx.EmptyBitmap(size.width, size.height)
@@ -772,7 +768,7 @@ class PassageWidget(object):
         # finally, draw a selection over ourselves if we're selected
 
         if self.selected:
-            color = dim(titleBarColor if flat else wx.SystemSettings_GetColour(wx.SYS_COLOUR_HIGHLIGHT), self.dimmed)
+            color = dim(titleBarColor if flat else wx.SystemSettings.GetColour(wx.SYS_COLOUR_HIGHLIGHT), self.dimmed)
             if self.app.config.ReadBool('fastStoryPanel'):
                 gc.SetPen(wx.Pen(color, 2 + flat))
             else:

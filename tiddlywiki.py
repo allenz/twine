@@ -413,7 +413,7 @@ class Tiddler: # pylint: disable=old-style-class
         title_re = re.compile(r'(?:data\-)?(?:tiddler|name)="([^"]*?)"')
         title = title_re.search(source)
         if title:
-            self.title = title.group(1)
+            self.title = decode_text(title.group(1))
 
         # tags
 

@@ -69,7 +69,7 @@ class StoryFrame(wx.Frame):
         self.recentFiles.Load(self.app.config)
         self.app.verifyRecentFiles(self)
         self.recentFiles.UseMenu(recentFilesMenu)
-        self.recentFiles.AddFilesToThisMenu(recentFilesMenu)
+        self.recentFiles.AddFilesToMenu(recentFilesMenu)
         fileMenu.AppendMenu(wx.ID_ANY, 'Open &Recent', recentFilesMenu)
         self.Bind(wx.EVT_MENU, lambda e: self.app.openRecent(self, 0), id=wx.ID_FILE1)
         self.Bind(wx.EVT_MENU, lambda e: self.app.openRecent(self, 1), id=wx.ID_FILE2)
@@ -1066,28 +1066,19 @@ You can also include URLs of .tws and .twee files, too.
 
         if not hasattr(self, 'metadataFrame'):
             self.metadataFrame = StoryMetadataFrame(parent=self, app=self.app)
+            self.metadataFrame.Bind(wx.EVT_WINDOW_DESTROY, lambda e: delattr(self, 'metadataFrame'))
         else:
-            try:
-                self.metadataFrame.Raise()
-            except wx._core.PyDeadObjectError:
-                # user closed the frame, so we need to recreate it
-                delattr(self, 'metadataFrame')
-                self.showMetadata(event)
+            self.metadataFrame.Raise()
 
     def showFind(self, event=None):
         """
         Shows a StoryFindFrame for this frame.
         """
-
         if not hasattr(self, 'findFrame'):
             self.findFrame = StoryFindFrame(self.storyPanel, self.app)
+            self.findFrame.Bind(wx.EVT_WINDOW_DESTROY, lambda e: delattr(self, 'findFrame'))
         else:
-            try:
-                self.findFrame.Raise()
-            except wx._core.PyDeadObjectError:
-                # user closed the frame, so we need to recreate it
-                delattr(self, 'findFrame')
-                self.showFind(event)
+            self.findFrame.Raise()
 
     def showReplace(self, event=None):
         """
@@ -1095,13 +1086,9 @@ You can also include URLs of .tws and .twee files, too.
         """
         if not hasattr(self, 'replaceFrame'):
             self.replaceFrame = StoryReplaceFrame(self.storyPanel, self.app)
+            self.replaceFrame.Bind(wx.EVT_WINDOW_DESTROY, lambda e: delattr(self, 'replaceFrame'))
         else:
-            try:
-                self.replaceFrame.Raise()
-            except wx._core.PyDeadObjectError:
-                # user closed the frame, so we need to recreate it
-                delattr(self, 'replaceFrame')
-                self.showReplace(event)
+            self.replaceFrame.Raise()
 
     def proof(self, event=None):
         """

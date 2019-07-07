@@ -263,26 +263,20 @@ class StoryPanel(wx.ScrolledWindow):
 
         # find the current selection
         # if there are multiple selections, we just use the first
-
-        i = -1
+        # if no widget is selected, start at first widget
 
         # look for selected PassageWidgets
-        widgets = self.widgetDict.values()
-        for num, widget in enumerate(widgets):
+        curr_widgets = widgets = self.widgetDict.values()
+        for i, widget in enumerate(widgets):
             if widget.selected:
-                i = num
+                curr_widgets = widgets[i+1:] + widgets[:i+1]
                 break
 
-        # if no widget is selected, start at first widget
-        if i==len(widgets)-1:
-            i=-1
-
-        for widget in widgets:
+        for widget in curr_widgets:
             if widget.containsRegexp(regexp, flags):
                 widget.setSelected(True)
                 self.scrollToWidget(widget)
                 return
-            i += 1
 
         # fallthrough: text not found
 
@@ -327,6 +321,7 @@ class StoryPanel(wx.ScrolledWindow):
         """
         Scrolls so that the widget passed is visible.
         """
+        print('Found widget', widget)
         widgetRect = widget.getPixelRect()
         xUnit,yUnit = self.GetScrollPixelsPerUnit()
         sx = (widgetRect.x-20) / float(xUnit)
@@ -995,7 +990,8 @@ class StoryPanel(wx.ScrolledWindow):
                     text += "..."
             # Don't show a tooltip for a 0-length passage
             if length > 0:
-                self.tooltipobj = wx.TipWindow(self, text, min(240, max(160,length/2)), wx.Rect(m[0],m[1],1,1))
+                self.tooltipobj = wx.TipWindow(self, text, min(240, max(160,length/2)))
+                self.tooltipobj.SetBoundingRect(wx.Rect(m[0],m[1],1,1))
 
     def handleHover(self, event):
         self.updateVisableRectsAndReturnUpdateRegion()

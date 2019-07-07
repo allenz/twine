@@ -17,7 +17,6 @@ class App(wx.App):
     def __init__(self, redirect = False):
         """Initializes the application."""
         wx.App.__init__(self, redirect = redirect)
-        locale.setlocale(locale.LC_ALL, '')
         self.stories = []
         self.loadPrefs()
         self.determinePaths()
@@ -147,13 +146,9 @@ class App(wx.App):
         """Shows the preferences dialog."""
         if not hasattr(self, 'prefFrame'):
             self.prefFrame = PreferenceFrame(self)
+            self.prefFrame.Bind(wx.EVT_WINDOW_DESTROY, lambda e: delattr(self, 'prefFrame'))
         else:
-            try:
-                self.prefFrame.Raise()
-            except wx._core.PyDeadObjectError:
-                # user closed the frame, so we need to recreate it
-                delattr(self, 'prefFrame')
-                self.showPrefs(event)
+            self.prefFrame.Raise()
 
     def addRecentFile(self, path):
         """Adds a path to the recent files history and updates the menus."""

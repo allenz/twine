@@ -32,6 +32,13 @@ class FindPanel(wx.Panel):
         findSizer.Add(self.findField, proportion = 1, flag = wx.BOTTOM | wx.EXPAND, \
                       border = metrics.size('relatedControls'))
         sizer.Add(findSizer, flag = wx.EXPAND | wx.TOP | wx.LEFT | wx.RIGHT, border = metrics.size('windowBorder'))
+        def esc_close(e): # mybe move escape binding to entire Frame and bind Replace as well
+            if e.GetKeyCode() == wx.WXK_ESCAPE:
+                self.closeCallback()
+                self.Close()
+            else:
+                e.Skip()
+        self.findField.Bind(wx.EVT_KEY_UP, esc_close)
 
         # option checkboxes
 
@@ -136,7 +143,7 @@ class ReplacePanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(sizer)
 
-        fieldSizer = wx.FlexGridSizer(2, 2)
+        fieldSizer = wx.FlexGridSizer(2, 2, 0)
         fieldSizer.AddGrowableCol(1, 1)
 
         # find text and label
