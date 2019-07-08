@@ -1,6 +1,23 @@
 Twine
 =====
 
+Allen's Fork
+----
+
+This fork allows Twine 1 to work on the latest wxPython version,
+version 4 "Phoenix". I fixed all the errors that I encountered but did not do
+a systematic migration. I ignored deprecation warnings and I'm sure that many
+errors remain. Python 2 is still required.
+
+In addition, I added a debug build target which unbundles scripts to improve
+debugging. It also shows the current passage title and a list of variables.
+
+If anyone uses this fork, I would be pretty surprised and would love to hear
+about it.
+
+Allen
+2019
+
 Introduction
 ------------
 
